@@ -10,11 +10,31 @@ app.use(cors());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+
+  const user = users.find(user => user.username === username)
+
+  if (!user) {
+    return response.status(404)
+  }
+  request.user = user
+  return next()
+
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  const isFreePlan = user.pro == false
+  const isProPlan = user.pro == true
+  const todoLenth = user.todos.length < 10
+  if (isFreePlan && todoLenth) {
+    return next()
+  } else if (isProPlan) {
+    return next()
+  } else {
+    return response.status(403)
+  }
 }
 
 function checksTodoExists(request, response, next) {
@@ -22,7 +42,7 @@ function checksTodoExists(request, response, next) {
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+
 }
 
 app.post('/users', (request, response) => {
